@@ -8,7 +8,8 @@
   "scripts": {
     "postinstall": "cp ./githooks/* .git/hooks",
     "lint-staged": "lint-staged",
-    "http-server": "http-server"
+    "http-server": "http-server",
+    "tsc": "tsc index.ts"
   },
   "devDependencies": {
     "eslint": "8.29.0",
@@ -17,5 +18,8 @@
     "http-server": "14.1.1",
     "lint-staged": "13.1.0",
     "prettier": "2.8.0"
+  },
+  "dependencies": {
+    "typescript": "5.3.3"
   }
 }
