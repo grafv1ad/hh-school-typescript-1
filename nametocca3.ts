@@ -1,5 +1,9 @@
 /* eslint-disable prettier/prettier */
-export default {
+interface IModule {
+    [key: string]: string,
+}
+
+const module: IModule = {
     'Christmas Island': 'CXR',
     'Eritrea': 'ERI',
     'Samoa': 'WSM',
@@ -251,3 +255,5 @@ export default {
     'Croatia': 'HRV',
     'Ivory Coast': 'CIV',
 };
+
+export default module;

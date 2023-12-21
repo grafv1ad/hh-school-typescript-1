@@ -1,5 +1,5 @@
-import nameToCca3 from './nametocca3.js';
-import Maps from './maps.js';
+import nameToCca3 from './nametocca3.ts';
+import Maps from './maps.ts';
 
 interface ICountry {
     cca3: string,
@@ -9,9 +9,9 @@ interface ICountry {
     borders: Array<string>,
 }
 
- interface ICountryList {
+interface ICountryList {
     [key: string]: ICountry,
- }
+}
 
 // Загрузка данных через await
 async function getData(url: string): Promise<Array<ICountry>> {

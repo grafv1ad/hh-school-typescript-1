@@ -1,4 +1,8 @@
-export default {
+interface IModule {
+    [key: string]: string,
+}
+
+const module: IModule = {
     VCT: 'VC',
     GUF: 'GF',
     FRO: 'FO',
@@ -250,3 +254,5 @@ export default {
     POL: 'PL',
     LBY: 'LY',
 };
+
+export default module;
