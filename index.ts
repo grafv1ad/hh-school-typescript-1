@@ -98,7 +98,7 @@ const showMessage = (message: string, enable = true): void => {
 (async (): Promise<void> => {
     disableInputs();
 
-    output.textContent = 'Loading…';
+    showMessage('Loading…', false);
     let countriesData: ICountryList = {};
     try {
         // ПРОВЕРКА ОШИБКИ №2: Ставим тут брейкпоинт и, когда дойдёт
@@ -178,20 +178,18 @@ const showMessage = (message: string, enable = true): void => {
             console.log('-----');
 
             const borders: Array<string> = getBorders(current.cca3);
-            borders.forEach((country: string) => {
-                // По каким-то причам ts ругался на find, как исправить не разобрался 
-                // @ts-expect-error 
-                if (!visited[country] && !queue.find((item: IQueueItem) => item.cca3 === country)) {
-                    const distance = current.distance + 1;
-                    if (distance <= 10) {
+            const distance = current.distance + 1;
+            if (distance <= 10) {
+                borders.forEach((country: string) => {
+                    if (!visited[country] && !queue.find((item: IQueueItem) => item.cca3 === country)) {
                         queue.push({
                             cca3: country,
                             route: [...current.route, country],
                             distance,
                         });
                     }
-                }
-            });
+                });
+            }
 
             i += 1;
             if (current.cca3 === to) {

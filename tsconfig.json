@@ -6,9 +6,9 @@
     "strictNullChecks": true,
     "allowJs": false,
     "lib": [
-      "es5",
-      "dom",
-      "es2015.promise"
+      "ES2020",
+      "ES2020.Promise",
+      "DOM"
     ],
   }
 }
