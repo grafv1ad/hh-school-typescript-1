@@ -1,6 +1,5 @@
-import nameToCca3 from '/nametocca3.js';
-import Maps from '/maps.js';
-
+import nameToCca3 from '/hh-school-typescript-1/nametocca3.js';
+import Maps from '/hh-school-typescript-1/maps.js';
 // Загрузка данных через await
 async function getData(url) {
     // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
@@ -41,7 +40,8 @@ async function loadCountriesData() {
         // ПРОВЕРКА ОШИБКИ №1: ломаем этот урл, заменяя all на allolo,
         // получаем кастомную ошибку.
         countries = await getData('https://restcountries.com/v3.1/all?fields=cca3&fields=name&fields=borders');
-    } catch (error) {
+    }
+    catch (error) {
         // console.log('catch for getData');
         // console.error(error);
         throw error;
