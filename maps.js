@@ -4,7 +4,7 @@ import 'https://cdn.amcharts.com/lib/5/index.js';
 import 'https://cdn.amcharts.com/lib/5/map.js';
 import 'https://cdn.amcharts.com/lib/5/geodata/worldLow.js';
 import 'https://cdn.amcharts.com/lib/5/themes/Animated.js';
-import cca3to2Map from '/cca3to2.js';
+import cca3to2Map from '/hh-school-typescript-1/cca3to2.js';
 
 const empty = () => {
     console.error('am5 is not initialized yet');
