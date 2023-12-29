@@ -132,7 +132,7 @@ const showMessage = (message, enable = true) => {
             console.log('-----');
             const borders = getBorders(current.cca3);
             const distance = current.distance + 1;
-            if (distance <= 10) {
+            if (distance <= 20) {
                 borders.forEach((country) => {
                     if (!visited[country] && !queue.find((item) => item.cca3 === country)) {
                         queue.push({
