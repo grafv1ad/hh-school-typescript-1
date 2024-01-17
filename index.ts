@@ -1,8 +1,20 @@
-import nameToCca3 from '/nametocca3.js';
-import Maps from '/maps.js';
+import nameToCca3 from './nametocca3.ts';
+import Maps from './maps.ts';
+
+interface ICountry {
+    cca3: string,
+    name: {
+        common: string,
+    },
+    borders: Array<string>,
+}
+
+interface ICountryList {
+    [key: string]: ICountry,
+}
 
 // Загрузка данных через await
-async function getDataAsync(url) {
+async function getData(url: string): Promise<Array<ICountry>> {
     // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
     const response = await fetch(url, {
         method: 'GET',
@@ -39,9 +51,6 @@ async function getDataAsync(url) {
     throw error;
 }
 
-// Две функции просто для примера, выберите с await или promise, какая нравится
-const getData = getDataAsync;
-
 async function loadCountriesData() {
     let countries = [];
     try {
@@ -53,47 +62,44 @@ async function loadCountriesData() {
         // console.error(error);
         throw error;
     }
-    return countries.reduce((result, country) => {
-        result[country.cca3] = {
-            cca3: country.cca3,
-            name: country.name.common,
-            borders: country.borders,
-        };
+
+    return countries.reduce((result: ICountryList, country: ICountry) => {
+        result[country.cca3] = country;
         return result;
     }, {});
 }
 
-const form = document.getElementById('form');
-const fromCountry = document.getElementById('fromCountry');
-const toCountry = document.getElementById('toCountry');
-const countriesList = document.getElementById('countriesList');
-const submit = document.getElementById('submit');
-const output = document.getElementById('output');
+const form = document.getElementById('form') as HTMLFormElement;
+const fromCountry = document.getElementById('fromCountry') as HTMLInputElement;
+const toCountry = document.getElementById('toCountry') as HTMLInputElement;
+const countriesList = document.getElementById('countriesList') as HTMLDataListElement;
+const submit = document.getElementById('submit') as HTMLButtonElement;
+const output = document.getElementById('output') as HTMLDivElement;
 
-const disableInputs = () => {
+const disableInputs = (): void => {
     fromCountry.disabled = true;
     toCountry.disabled = true;
     submit.disabled = true;
 };
 
-const enableInputs = () => {
+const enableInputs = (): void => {
     fromCountry.disabled = false;
     toCountry.disabled = false;
     submit.disabled = false;
 };
 
-const showMessage = (message, enable = true) => {
+const showMessage = (message: string, enable = true): void => {
     output.textContent = message;
     if (enable) {
         enableInputs();
     }
 };
 
-(async () => {
+(async (): Promise<void> => {
     disableInputs();
 
-    output.textContent = 'Loading…';
-    let countriesData = {};
+    showMessage('Loading…', false);
+    let countriesData: ICountryList = {};
     try {
         // ПРОВЕРКА ОШИБКИ №2: Ставим тут брейкпоинт и, когда дойдёт
         // до него, переходим в оффлайн-режим. Получаем эксцепшн из `fetch`.
@@ -106,27 +112,27 @@ const showMessage = (message, enable = true) => {
     }
     output.textContent = '';
 
-    const getBorders = (cca3) => countriesData[cca3]?.borders;
+    const getBorders = (cca3: string): Array<string> => countriesData[cca3]?.borders;
 
     // Заполняем список стран для подсказки в инпутах
     Object.keys(countriesData)
-        .sort((a, b) => countriesData[a].name.localeCompare(countriesData[b].name))
+        .sort((a, b) => countriesData[a].name.common.localeCompare(countriesData[b].name.common))
         .forEach((code) => {
             const option = document.createElement('option');
-            option.value = countriesData[code].name;
+            option.value = countriesData[code].name.common;
             countriesList.appendChild(option);
         });
 
     enableInputs();
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', (event): void => {
         event.preventDefault();
 
         disableInputs();
         output.textContent = 'Loading, please wait';
 
-        const from = nameToCca3[fromCountry.value];
-        const to = nameToCca3[toCountry.value];
+        const from: string = nameToCca3[fromCountry.value];
+        const to: string = nameToCca3[toCountry.value];
 
         if (!from || !to) {
             return showMessage('Incorrect country names, please check and try again');
@@ -146,12 +152,22 @@ const showMessage = (message, enable = true) => {
 
         Maps.setEndPoints(from, to);
 
-        const queue = [{ cca3: from, route: [from], distance: 0 }];
-        const visited = {};
+        interface IQueueItem {
+            cca3: string,
+            route: Array<string>,
+            distance: number,
+        }
+
+        interface IVisited {
+            [key: string]: number | null;
+        }
+
+        const queue: Array<IQueueItem> = [{ cca3: from, route: [from], distance: 0 }];
+        const visited: IVisited = {};
         let i = 0;
 
         while (queue.length > 0) {
-            const current = queue.shift();
+            const current: IQueueItem = queue.shift()!;
             visited[current.cca3] = 1;
 
             console.log('current cca3', current.cca3);
@@ -161,19 +177,19 @@ const showMessage = (message, enable = true) => {
             console.log('visited', visited);
             console.log('-----');
 
-            const borders = getBorders(current.cca3);
-            borders.forEach((country) => {
-                if (!visited[country.cca3] && !queue.find((item) => item.cca3 === country)) {
-                    const distance = current.distance + 1;
-                    if (distance <= 10) {
+            const borders: Array<string> = getBorders(current.cca3);
+            const distance = current.distance + 1;
+            if (distance <= 10) {
+                borders.forEach((country: string) => {
+                    if (!visited[country] && !queue.find((item: IQueueItem) => item.cca3 === country)) {
                         queue.push({
                             cca3: country,
                             route: [...current.route, country],
                             distance,
                         });
                     }
-                }
-            });
+                });
+            }
 
             i += 1;
             if (current.cca3 === to) {
@@ -186,9 +202,5 @@ const showMessage = (message, enable = true) => {
             }
         }
         return showMessage('These countries are too far apart');
-
-        // TODO: Вывести, откуда и куда едем, и что идёт расчёт.
-        // TODO: Рассчитать маршрут из одной страны в другую за минимум запросов.
-        // TODO: Вывести маршрут и общее количество запросов.
     });
 })();
